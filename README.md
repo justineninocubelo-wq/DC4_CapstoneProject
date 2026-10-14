@@ -62,7 +62,7 @@ where service requests can be recorded, monitored, and updated.
 
 1. users
 Stores account and login information.
-- id (Primary Key)
+- user_id (Primary Key)
 - name
 - email (Unique)
 - password
@@ -72,7 +72,7 @@ Stores account and login information.
 
 2. customers
 Stores additional information about customers.
-- id (Primary Key)
+- customer_id (Primary Key)
 - user_id (Foreign Key referencing users.id, unique)
 - phone
 - address
@@ -81,7 +81,7 @@ Stores additional information about customers.
 
 3. services
 Stores the services offered by J Prints.
-- id (Primary Key)
+- service_id (Primary Key)
 - service_name
 - description
 - base_price
@@ -91,7 +91,7 @@ Stores the services offered by J Prints.
 
 4. service_requests
 Stores customer repair requests and their current status.
-- id (Primary Key)
+- service_request_id (Primary Key)
 - customer_id (Foreign Key referencing customers.id)
 - service_id (Foreign Key referencing services.id)
 - printer_brand
@@ -104,9 +104,9 @@ Stores customer repair requests and their current status.
 
 5. service_records
 Stores diagnosis and repair updates for each request.
-- id (Primary Key)
+- service_records_id (Primary Key)
 - service_request_id (Foreign Key referencing service_requests.id)
-- staff_user_id (Foreign Key referencing users.id)
+- user_id (Foreign Key referencing users.id)
 - diagnosis
 - work_performed
 - parts_used
@@ -205,6 +205,16 @@ The system has five main tables: `users`, `customers`, `services`, `service_requ
 - A service can be associated with multiple service requests.
 - A service request can contain multiple service records.
 - A staff or administrator user can create multiple service records.
+
+## Database Design
+
+View the [Formal Entity Relationship Diagram](docs/screenshots/J%20Prints%20Service%20Management%20System.png).
+
+The database consists of five main tables: `users`, `customers`,
+`services`, `service_requests`, and `service_records`.
+
+Service requests follow the workflow:
+Received → Diagnosing → Repairing → Ready → Released.
 
 ## Service Request Workflow
 

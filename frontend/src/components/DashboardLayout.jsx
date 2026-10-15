@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LayoutDashboard, LogOut, Menu, Printer, X } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../contexts/useAuth'
 
 export default function DashboardLayout({ title, children }) {
   const { user, logout } = useAuth()

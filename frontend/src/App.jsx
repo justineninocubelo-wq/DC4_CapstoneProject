@@ -1,21 +1,39 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import { useAuth } from './contexts/useAuth'
+
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
+
 import AdminDashboard from './pages/admin/AdminDashboard'
+import CustomerManagement from './pages/admin/CustomerManagement'
+
 import CustomerDashboard from './pages/customer/CustomerDashboard'
 
 function ProtectedRoute({ children, allowedRole }) {
   const { user, loading } = useAuth()
 
-  if (loading) return <div className="loading-screen">Loading J-Prints...</div>
-  if (!user) return <Navigate to="/login" replace />
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        Loading J-Prints...
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
 
   const role = user.role?.toLowerCase()
 
   if (role !== allowedRole) {
-    return <Navigate to={role === 'admin' ? '/admin' : '/customer'} replace />
+    return (
+      <Navigate
+        to={role === 'admin' ? '/admin' : '/customer'}
+        replace
+      />
+    )
   }
 
   return children
@@ -24,10 +42,26 @@ function ProtectedRoute({ children, allowedRole }) {
 function HomeRedirect() {
   const { user, loading } = useAuth()
 
-  if (loading) return <div className="loading-screen">Loading J-Prints...</div>
-  if (!user) return <Navigate to="/login" replace />
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        Loading J-Prints...
+      </div>
+    )
+  }
 
-  return <Navigate to={user.role?.toLowerCase() === 'admin' ? '/admin' : '/customer'} replace />
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+
+  const role = user.role?.toLowerCase()
+
+  return (
+    <Navigate
+      to={role === 'admin' ? '/admin' : '/customer'}
+      replace
+    />
+  )
 }
 
 export default function App() {
@@ -35,9 +69,22 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<HomeRedirect />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+
+          <Route
+            path="/"
+            element={<HomeRedirect />}
+          />
+
+          <Route
+            path="/login"
+            element={<Login />}
+          />
+
+          <Route
+            path="/register"
+            element={<Register />}
+          />
+
           <Route
             path="/admin"
             element={
@@ -46,6 +93,16 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/admin/customers"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <CustomerManagement />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/customer"
             element={
@@ -54,7 +111,12 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/" replace />} />
+
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
+
         </Routes>
       </AuthProvider>
     </BrowserRouter>

@@ -170,3 +170,25 @@ label { display: block; margin: 20px 0 9px; font-size: 13px; font-weight: 700; }
   .register-card { padding: 26px; }
   .auth-card h2, .register-card h2 { font-size: 29px; }
 }
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sidebar-nav .sidebar-item {
+  color: #dce9ff;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.sidebar-nav .sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.sidebar-nav .sidebar-item.active {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-weight: 700;
+}

@@ -33,7 +33,7 @@ class User extends Authenticatable
 
     public function customer()
     {
-        return $this->hasOne(Customer::class);
+        return $this->hasOne(\App\Models\Customer::class);
     }
 
     public function serviceRecords()

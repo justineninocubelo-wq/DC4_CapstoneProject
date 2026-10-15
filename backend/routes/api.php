@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\CustomerController;
+use App\Http\Controllers\Api\ServiceRecordController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -48,6 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/service-requests/{serviceRequest}', [ServiceRequestController::class, 'update']);
     Route::delete('/service-requests/{serviceRequest}', [ServiceRequestController::class, 'destroy']);
     Route::patch('/service-requests/{serviceRequest}/cancel', [ServiceRequestController::class, 'cancel']);
+
+    Route::apiResource('service-records', ServiceRecordController::class);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {

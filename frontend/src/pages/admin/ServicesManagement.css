@@ -1,0 +1,129 @@
+
+.services-heading-actions,
+.services-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.services-filter {
+  padding: 12px 14px;
+  border: 1px solid #dfe7f3;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #173153;
+  font: inherit;
+  cursor: pointer;
+  min-width: 145px;
+}
+
+.services-description {
+  display: block;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.services-price {
+  font-weight: 700;
+  color: #173153;
+  white-space: nowrap;
+}
+
+.services-status {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.services-status.active {
+  background: #e5f7ed;
+  color: #177245;
+}
+
+.services-status.inactive {
+  background: #f1f3f7;
+  color: #64748b;
+}
+
+.services-success {
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  background: #e5f7ed;
+  border: 1px solid #c4ebd3;
+  color: #177245;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.services-checkbox-label {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 10px !important;
+  cursor: pointer;
+}
+
+.services-checkbox-label input {
+  width: 17px;
+  height: 17px;
+  accent-color: #1e66d5;
+  cursor: pointer;
+}
+
+.services-modal-actions {
+  flex-wrap: wrap;
+}
+
+.services-page .customers-modal {
+  width: min(100%, 540px);
+}
+
+.services-page .customers-form textarea {
+  resize: vertical;
+}
+
+.services-page .customers-btn:hover:not(:disabled),
+.services-page .customers-actions button:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+@media (max-width: 800px) {
+  .services-heading-actions,
+  .services-toolbar-actions {
+    width: 100%;
+  }
+
+  .services-toolbar-actions .customers-search {
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .services-table {
+    min-width: 700px;
+  }
+}
+
+@media (max-width: 480px) {
+  .services-heading-actions .customers-btn {
+    flex: 1;
+  }
+
+  .services-toolbar-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .services-toolbar-actions .customers-search {
+    min-width: 0;
+  }
+
+  .services-modal-actions .customers-btn {
+    flex: 1;
+  }
+}

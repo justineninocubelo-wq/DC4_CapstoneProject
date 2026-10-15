@@ -2,14 +2,19 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import { useAuth } from './contexts/useAuth'
 
+// Authentication Pages
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 
+// Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard'
 import CustomerManagement from './pages/admin/CustomerManagement'
+import ServicesManagement from './pages/admin/ServicesManagement'
 
+// Customer Pages
 import CustomerDashboard from './pages/customer/CustomerDashboard'
 
+// Protect routes based on user role
 function ProtectedRoute({ children, allowedRole }) {
   const { user, loading } = useAuth()
 
@@ -39,6 +44,7 @@ function ProtectedRoute({ children, allowedRole }) {
   return children
 }
 
+// Redirect users to their respective dashboards
 function HomeRedirect() {
   const { user, loading } = useAuth()
 
@@ -64,17 +70,20 @@ function HomeRedirect() {
   )
 }
 
+// Main Application
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
 
+          {/* Home */}
           <Route
             path="/"
             element={<HomeRedirect />}
           />
 
+          {/* Authentication */}
           <Route
             path="/login"
             element={<Login />}
@@ -85,6 +94,7 @@ export default function App() {
             element={<Register />}
           />
 
+          {/* Admin Dashboard */}
           <Route
             path="/admin"
             element={
@@ -94,6 +104,7 @@ export default function App() {
             }
           />
 
+          {/* Customer Management */}
           <Route
             path="/admin/customers"
             element={
@@ -103,6 +114,17 @@ export default function App() {
             }
           />
 
+          {/* Services Management */}
+          <Route
+            path="/admin/services"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <ServicesManagement />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Customer Dashboard */}
           <Route
             path="/customer"
             element={
@@ -112,6 +134,7 @@ export default function App() {
             }
           />
 
+          {/* Redirect unknown routes */}
           <Route
             path="*"
             element={<Navigate to="/" replace />}

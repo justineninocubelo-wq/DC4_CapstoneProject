@@ -33,10 +33,32 @@ class ServiceController extends Controller
         ], 200);
     }
 
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
+        $validated = $request->validate([
+            'search' => 'sometimes|nullable|string|max:255',
+            'is_active' => 'sometimes|boolean',
+            'per_page' => 'sometimes|integer|min:1|max:100',
+        ]);
+
+        $query = Service::query();
+
+        if (!empty($validated['search'])) {
+            $search = $validated['search'];
+
+            $query->where(function ($q) use ($search) {
+                $q->where('service_name', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if (isset($validated['is_active'])) {
+            $query->where('is_active', $validated['is_active']);
+        }
+
         return response()->json([
-            'services' => Service::orderBy('id', 'desc')->get()
+            'services' => $query->orderBy('id', 'desc')
+                ->paginate($validated['per_page'] ?? 10)
         ], 200);
     }
 

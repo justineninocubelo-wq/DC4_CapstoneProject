@@ -10,13 +10,32 @@ use Illuminate\Validation\Rule;
 
 class CustomerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json([
-            'customers' => Customer::with('user:id,name,email,role')
-                ->latest()
-                ->get()
+        $validated = $request->validate([
+            'search' => 'sometimes|nullable|string|max:255',
+            'per_page' => 'sometimes|integer|min:1|max:100',
         ]);
+
+        $query = Customer::with('user:id,name,email,role');
+
+        if (!empty($validated['search'])) {
+            $search = $validated['search'];
+
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                })
+                ->orWhere('phone', 'like', "%{$search}%")
+                ->orWhere('address', 'like', "%{$search}%");
+            });
+        }
+
+        return response()->json([
+            'customers' => $query->latest()
+                ->paginate($validated['per_page'] ?? 10)
+        ], 200);
     }
 
     public function show(Request $request, Customer $customer)

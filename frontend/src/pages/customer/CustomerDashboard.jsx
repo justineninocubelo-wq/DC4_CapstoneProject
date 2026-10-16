@@ -383,7 +383,7 @@ export default function CustomerDashboard() {
           <div className="jpc-alert jpc-alert-success" role="status">
             <CheckCircle2 size={19} />
             <span>{success}</span>
-            <button type="button" onClick={() => setSuccess('')}>
+            <button type="button" className="jpc-alert-close" aria-label="Dismiss success notification" onClick={() => setSuccess('')}>
               <X size={17} />
             </button>
           </div>
@@ -393,7 +393,7 @@ export default function CustomerDashboard() {
           <div className="jpc-alert jpc-alert-error" role="alert">
             <AlertCircle size={19} />
             <span>{error}</span>
-            <button type="button" onClick={() => setError('')}>
+            <button type="button" className="jpc-alert-close" aria-label="Dismiss error notification" onClick={() => setError('')}>
               <X size={17} />
             </button>
           </div>
@@ -633,7 +633,7 @@ export default function CustomerDashboard() {
                       <p>{service.description || 'J-Prints service'}</p>
 
                       <div className="jpc-service-footer">
-                        <strong>{peso(service.base_price)}</strong>
+                        <div className="jpc-service-price"><span>Starting price</span><strong>{peso(service.base_price)}</strong></div>
 
                         <button
                           type="button"

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
-  Search, RefreshCw, Plus, Eye, Pencil, Trash2,
+  Search, RefreshCw, Eye, Pencil, Trash2,
   X, Wrench, ChevronLeft, ChevronRight
 } from 'lucide-react'
 import api from '../../services/api'
@@ -168,17 +168,11 @@ export default function ServicesManagement() {
     setSaving(true)
 
     try {
-      if (modal === 'add') {
-        await api.post('/services', payload)
-      } else {
-        await api.put(`/services/${selected.id}`, payload)
-      }
+      await api.put(`/services/${selected.id}`, payload)
 
       setModal('')
       setSelected(null)
-      setNotice(modal === 'add'
-        ? 'Service added successfully.'
-        : 'Service updated successfully.')
+      setNotice('Service updated successfully.')
       await refreshAfterChange()
     } catch (err) {
       setModalError(getError(err, 'Unable to save service.'))
@@ -251,13 +245,6 @@ export default function ServicesManagement() {
             >
               <RefreshCw size={17} /> Refresh
             </button>
-
-            <button
-              className="customers-btn primary"
-              onClick={() => openModal('add')}
-            >
-              <Plus size={18} /> Add Service
-            </button>
           </div>
         </div>
 
@@ -281,7 +268,7 @@ export default function ServicesManagement() {
           <div className="customers-toolbar">
             <div>
               <h2>Service Directory</h2>
-              <p>View, search, and manage your offered services.</p>
+              <p>Manage the two official services. Legacy test services can be deactivated or removed if unused.</p>
             </div>
 
             <div className="services-toolbar-actions">
@@ -388,6 +375,7 @@ export default function ServicesManagement() {
                             title="Edit service"
                             aria-label={`Edit ${service.service_name}`}
                             onClick={() => openModal('edit', service)}
+                            disabled={!service.service_type}
                           >
                             <Pencil size={17} />
                           </button>
@@ -445,8 +433,7 @@ export default function ServicesManagement() {
             >
               <div className="customers-modal-header">
                 <h2 id="service-modal-title">
-                  {modal === 'add' ? 'Add New Service'
-                    : modal === 'edit' ? 'Edit Service'
+                  {modal === 'edit' ? 'Edit Service'
                       : modal === 'view' ? 'Service Details'
                         : 'Delete Service'}
                 </h2>
@@ -494,6 +481,7 @@ export default function ServicesManagement() {
                     <button
                       className="customers-btn primary"
                       onClick={() => setModal('edit')}
+                      disabled={!selected.service_type}
                     >
                       Edit Service
                     </button>
@@ -501,7 +489,7 @@ export default function ServicesManagement() {
                 </>
               )}
 
-              {(modal === 'add' || modal === 'edit') && (
+              {modal === 'edit' && (
                 <form className="customers-form" onSubmit={saveService}>
                   <p className="customers-form-hint">
                     Enter the service information below.
@@ -517,7 +505,7 @@ export default function ServicesManagement() {
                       }))}
                       maxLength={255}
                       required
-                      placeholder="e.g. Black and White Printing"
+                      placeholder="Service name"
                     />
                   </label>
 
@@ -583,8 +571,7 @@ export default function ServicesManagement() {
                       className="customers-btn primary"
                       disabled={saving}
                     >
-                      {saving ? 'Saving...' : modal === 'add'
-                        ? 'Add Service' : 'Save Changes'}
+                      {saving ? 'Saving...' : 'Save Changes'}
                     </button>
                   </div>
                 </form>

@@ -127,3 +127,137 @@
     flex: 1;
   }
 }
+
+/* Request details in the table */
+.jpr-request-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.jpr-request-summary strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: #17365c;
+}
+
+.jpr-request-summary span {
+  font-size: 12px;
+  color: #8192ac;
+}
+
+/* Printing and printer repair details */
+.jpr-detail-subtitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #17365c;
+  margin: 24px 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5ecf6;
+}
+
+/* Keep tables responsive */
+.jpr-table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.jpr-table {
+  width: 100%;
+}
+
+.jpr-table td,
+.jpr-table th {
+  overflow-wrap: anywhere;
+}
+
+.jpr-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .jpr-table {
+    min-width: 760px;
+  }
+}
+
+
+/* Improved Service Requests table */
+
+.jpr-table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.jpr-table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.jpr-table th,
+.jpr-table td {
+  padding: 16px 14px;
+  vertical-align: middle;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.jpr-table th {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.jpr-table th:first-child,
+.jpr-table td:first-child {
+  width: 65px;
+  white-space: nowrap;
+}
+
+.jpr-table th:nth-last-child(2),
+.jpr-table td:nth-last-child(2) {
+  min-width: 125px;
+  white-space: nowrap;
+}
+
+.jpr-table th:last-child,
+.jpr-table td:last-child {
+  min-width: 100px;
+  white-space: nowrap;
+}
+
+.jpr-table .jpr-status {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 7px 11px;
+  border-radius: 20px;
+}
+
+.jpr-request-summary {
+  min-width: 150px;
+  overflow-wrap: break-word;
+}
+
+.jpr-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 900px) {
+  .jpr-table {
+    min-width: 850px;
+  }
+}

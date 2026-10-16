@@ -10,10 +10,7 @@ class Service extends Model
     use HasFactory;
 
     protected $fillable = [
-        'service_name',
-        'description',
-        'base_price',
-        'is_active',
+        'service_name', 'description', 'base_price', 'is_active',
     ];
 
     protected function casts(): array

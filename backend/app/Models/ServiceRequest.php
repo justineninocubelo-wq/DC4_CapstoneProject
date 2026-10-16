@@ -15,6 +15,11 @@ class ServiceRequest extends Model
         'printer_brand',
         'printer_model',
         'issue_description',
+        'document_description',
+        'number_of_copies',
+        'paper_size',
+        'color_mode',
+        'printing_instructions',
         'status',
         'received_at',
     ];
@@ -23,6 +28,7 @@ class ServiceRequest extends Model
     {
         return [
             'received_at' => 'datetime',
+            'number_of_copies' => 'integer',
         ];
     }
 

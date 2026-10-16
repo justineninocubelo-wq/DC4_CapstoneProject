@@ -9,28 +9,23 @@ use Illuminate\Validation\Rule;
 
 class ServiceController extends Controller
 {
+    private const TYPES = ['printing', 'repair'];
+
     public function index()
     {
-        $services = Service::where('is_active', true)
-            ->orderBy('service_name')
-            ->get();
-
         return response()->json([
-            'services' => $services
-        ], 200);
+            'services' => Service::where('is_active', true)
+                ->whereIn('service_type', self::TYPES)
+                ->orderBy('service_name')->get(),
+        ]);
     }
 
     public function show(Service $service)
     {
-        if (!$service->is_active) {
-            return response()->json([
-                'message' => 'Service not found.'
-            ], 404);
+        if (!$service->is_active || !in_array($service->service_type, self::TYPES, true)) {
+            return response()->json(['message' => 'Service not found.'], 404);
         }
-
-        return response()->json([
-            'service' => $service
-        ], 200);
+        return response()->json(['service' => $service]);
     }
 
     public function adminIndex(Request $request)
@@ -42,78 +37,75 @@ class ServiceController extends Controller
         ]);
 
         $query = Service::query();
-
         if (!empty($validated['search'])) {
             $search = $validated['search'];
-
             $query->where(function ($q) use ($search) {
                 $q->where('service_name', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%");
+                  ->orWhere('description', 'like', "%{$search}%");
             });
         }
-
         if (isset($validated['is_active'])) {
             $query->where('is_active', $validated['is_active']);
         }
-
         return response()->json([
             'services' => $query->orderBy('id', 'desc')
-                ->paginate($validated['per_page'] ?? 10)
-        ], 200);
+                ->paginate($validated['per_page'] ?? 10),
+        ]);
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'service_name' => 'required|string|max:255|unique:services,service_name',
-            'description' => 'nullable|string',
-            'base_price' => 'required|numeric|min:0|max:99999999.99',
-            'is_active' => 'sometimes|boolean'
-        ]);
-
-        $service = Service::create($validated);
-
         return response()->json([
-            'message' => 'Service created successfully.',
-            'service' => $service
-        ], 201);
+            'message' => 'J-Prints supports only the two existing services: Document Printing and Photocopying and Printer Repair. Edit an existing service instead.',
+        ], 403);
     }
 
     public function update(Request $request, Service $service)
     {
+        if (!in_array($service->service_type, self::TYPES, true)) {
+            // Legacy/test services may only be deactivated.
+            $validated = $request->validate([
+                'is_active' => 'required|boolean',
+            ]);
+            if ($validated['is_active']) {
+                return response()->json(['message' => 'Legacy services cannot be reactivated.'], 422);
+            }
+            $service->update(['is_active' => false]);
+            return response()->json([
+                'message' => 'Legacy service deactivated successfully.',
+                'service' => $service->fresh(),
+            ]);
+        }
+
         $validated = $request->validate([
             'service_name' => [
-                'sometimes',
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('services', 'service_name')->ignore($service->id)
+                'sometimes', 'required', 'string', 'max:255',
+                Rule::unique('services', 'service_name')->ignore($service->id),
             ],
             'description' => 'sometimes|nullable|string',
             'base_price' => 'sometimes|required|numeric|min:0|max:99999999.99',
-            'is_active' => 'sometimes|boolean'
+            'is_active' => 'sometimes|boolean',
         ]);
-
         $service->update($validated);
-
         return response()->json([
             'message' => 'Service updated successfully.',
-            'service' => $service->fresh()
-        ], 200);
+            'service' => $service->fresh(),
+        ]);
     }
 
     public function destroy(Service $service)
     {
-        if ($service->serviceRequests()->exists()) {
+        if (in_array($service->service_type, self::TYPES, true)) {
             return response()->json([
-                'message' => 'This service has existing requests. Deactivate it instead of deleting it.'
+                'message' => 'Official services cannot be deleted. Deactivate them instead.',
             ], 409);
         }
-
+        if ($service->serviceRequests()->exists()) {
+            return response()->json([
+                'message' => 'This service has existing requests. Deactivate it instead of deleting it.',
+            ], 409);
+        }
         $service->delete();
-
-        return response()->json([
-            'message' => 'Service deleted successfully.'
-        ], 200);
+        return response()->json(['message' => 'Service deleted successfully.']);
     }
 }

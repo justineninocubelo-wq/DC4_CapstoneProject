@@ -27,7 +27,48 @@ and printer service requests. Information about repairs, services,
 prices, and request statuses can become difficult to manage when
 handled manually.
 
-The proposed system will provide a centralized web application
+The proposed system will provide a cen# J-Prints two-service update
+
+Copy the files into the matching project paths. Back up the database before migrating.
+
+## Required additional backend changes: ServiceRequestController.php
+
+In store(), immediately after `$service = Service::findOrFail($validated['service_id']);`, add:
+
+```php
+if (!in_array($service->service_type, ['printing', 'repair'], true)) {
+    return response()->json(['message' => 'Unsupported service type.'], 422);
+}
+```
+
+In update(), inside the existing `if (isset($validated['service_id']))` block, immediately after `$service = Service::findOrFail($validated['service_id']);`, add the same check.
+
+This prevents customers/admins from creating new requests for legacy services. Existing requests and service records are preserved.
+
+## Migration and checks
+
+From backend:
+
+```powershell
+php artisan migrate
+php artisan route:list --path=api/services
+```
+
+From frontend:
+
+```powershell
+npm run lint
+npm run build
+```
+
+## Important
+
+The migration maps exact official service names. Before migrating, ensure the two official rows are named exactly `Document Printing and Photocopying` and `Printer Repair`. If they have different names, adjust the two mapping strings in the migration BEFORE running it.
+
+`POST /api/services` now returns 403 for all new service creation attempts. Existing official services can be edited and toggled active/inactive. Legacy services can only be deactivated or deleted when no requests depend on them. Do not delete test requests merely to clean up a service.
+
+The React frontend files were updated to use `service_type`, and the Add Service button was removed. No CSS or route changes are needed.
+tralized web application
 where service requests can be recorded, monitored, and updated.
 
 ## User Roles

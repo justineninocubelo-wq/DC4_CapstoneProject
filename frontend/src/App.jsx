@@ -1,21 +1,20 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import { AuthProvider } from './contexts/AuthContext.jsx'
+import { AuthProvider } from './contexts/AuthContext'
 import { useAuth } from './contexts/useAuth'
+import DashboardLayout from './components/DashboardLayout'
 
-// Authentication Pages
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 
-// Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard'
 import CustomerManagement from './pages/admin/CustomerManagement'
 import ServicesManagement from './pages/admin/ServicesManagement'
+import ServiceRequestsManagement from './pages/admin/ServiceRequestsManagement'
+import ServiceRecordsManagement from './pages/admin/ServiceRecordsManagement'
 
-// Customer Pages
 import CustomerDashboard from './pages/customer/CustomerDashboard'
 
-// Protect routes based on user role
-function ProtectedRoute({ children, allowedRole }) {
+function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth()
 
   if (loading) {
@@ -30,12 +29,12 @@ function ProtectedRoute({ children, allowedRole }) {
     return <Navigate to="/login" replace />
   }
 
-  const role = user.role?.toLowerCase()
+  const userRole = user.role?.toLowerCase()
 
-  if (role !== allowedRole) {
+  if (role && userRole !== role) {
     return (
       <Navigate
-        to={role === 'admin' ? '/admin' : '/customer'}
+        to={userRole === 'admin' ? '/admin' : '/customer'}
         replace
       />
     )
@@ -44,7 +43,29 @@ function ProtectedRoute({ children, allowedRole }) {
   return children
 }
 
-// Redirect users to their respective dashboards
+function GuestRoute({ children }) {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        Loading J-Prints...
+      </div>
+    )
+  }
+
+  if (user) {
+    return (
+      <Navigate
+        to={user.role?.toLowerCase() === 'admin' ? '/admin' : '/customer'}
+        replace
+      />
+    )
+  }
+
+  return children
+}
+
 function HomeRedirect() {
   const { user, loading } = useAuth()
 
@@ -60,87 +81,113 @@ function HomeRedirect() {
     return <Navigate to="/login" replace />
   }
 
-  const role = user.role?.toLowerCase()
-
   return (
     <Navigate
-      to={role === 'admin' ? '/admin' : '/customer'}
+      to={user.role?.toLowerCase() === 'admin' ? '/admin' : '/customer'}
       replace
     />
   )
 }
 
-// Main Application
+function AdminPage({ title, children }) {
+  return (
+    <DashboardLayout title={title}>
+      {children}
+    </DashboardLayout>
+  )
+}
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomeRedirect />} />
+
+      <Route
+        path="/login"
+        element={
+          <GuestRoute>
+            <Login />
+          </GuestRoute>
+        }
+      />
+
+      <Route
+        path="/register"
+        element={
+          <GuestRoute>
+            <Register />
+          </GuestRoute>
+        }
+      />
+
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/customers"
+        element={
+          <ProtectedRoute role="admin">
+            <CustomerManagement />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/services"
+        element={
+          <ProtectedRoute role="admin">
+            <ServicesManagement />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/service-requests"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminPage title="Service Requests Management">
+              <ServiceRequestsManagement />
+            </AdminPage>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/service-records"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminPage title="Service Records Management">
+              <ServiceRecordsManagement />
+            </AdminPage>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/customer"
+        element={
+          <ProtectedRoute role="customer">
+            <CustomerDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="*" element={<HomeRedirect />} />
+    </Routes>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-
-          {/* Home */}
-          <Route
-            path="/"
-            element={<HomeRedirect />}
-          />
-
-          {/* Authentication */}
-          <Route
-            path="/login"
-            element={<Login />}
-          />
-
-          <Route
-            path="/register"
-            element={<Register />}
-          />
-
-          {/* Admin Dashboard */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute allowedRole="admin">
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Customer Management */}
-          <Route
-            path="/admin/customers"
-            element={
-              <ProtectedRoute allowedRole="admin">
-                <CustomerManagement />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Services Management */}
-          <Route
-            path="/admin/services"
-            element={
-              <ProtectedRoute allowedRole="admin">
-                <ServicesManagement />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Customer Dashboard */}
-          <Route
-            path="/customer"
-            element={
-              <ProtectedRoute allowedRole="customer">
-                <CustomerDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Redirect unknown routes */}
-          <Route
-            path="*"
-            element={<Navigate to="/" replace />}
-          />
-
-        </Routes>
+        <AppRoutes />
       </AuthProvider>
     </BrowserRouter>
   )

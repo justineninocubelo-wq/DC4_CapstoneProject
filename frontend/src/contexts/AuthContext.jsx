@@ -1,35 +1,47 @@
 import { useEffect, useState } from 'react'
 import api from '../services/api'
-import { AuthContext } from './authContext'
+import { AuthContext } from './AuthContextDefinition'
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let active = true
+
     async function restoreSession() {
       const token = localStorage.getItem('jprints_token')
 
       if (!token) {
-        setLoading(false)
+        if (active) setLoading(false)
         return
       }
 
       try {
         const response = await api.get('/me')
-        setUser(response.data.user ?? response.data)
+        if (active) {
+          setUser(response.data.user ?? response.data)
+        }
       } catch {
         localStorage.removeItem('jprints_token')
+        if (active) setUser(null)
       } finally {
-        setLoading(false)
+        if (active) setLoading(false)
       }
     }
 
     restoreSession()
+
+    return () => {
+      active = false
+    }
   }, [])
 
   async function login(email, password) {
-    const response = await api.post('/login', { email, password })
+    const response = await api.post('/login', {
+      email,
+      password
+    })
 
     const token = response.data.token ?? response.data.access_token
 
@@ -42,10 +54,12 @@ export function AuthProvider({ children }) {
     try {
       const profile = await api.get('/me')
       const loggedInUser = profile.data.user ?? profile.data
+
       setUser(loggedInUser)
       return loggedInUser
     } catch (error) {
       localStorage.removeItem('jprints_token')
+      setUser(null)
       throw error
     }
   }
@@ -64,7 +78,15 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        logout
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

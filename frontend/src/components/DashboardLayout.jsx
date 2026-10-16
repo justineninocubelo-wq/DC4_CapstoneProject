@@ -1,36 +1,68 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard,
-  LogOut,
-  Menu,
   Printer,
+  LayoutDashboard,
   Users,
   Wrench,
-  X
+  ClipboardList,
+  FileText,
+  LogOut,
+  Menu,
+  X,
+  UserCircle
 } from 'lucide-react'
-
 import { useAuth } from '../contexts/useAuth'
 
-export default function DashboardLayout({ title, children }) {
+const adminLinks = [
+  {
+    label: 'Dashboard',
+    path: '/admin',
+    icon: LayoutDashboard,
+    end: true
+  },
+  {
+    label: 'Customers',
+    path: '/admin/customers',
+    icon: Users
+  },
+  {
+    label: 'Services',
+    path: '/admin/services',
+    icon: Wrench
+  },
+  {
+    label: 'Service Requests',
+    path: '/admin/service-requests',
+    icon: ClipboardList
+  },
+  {
+    label: 'Service Records',
+    path: '/admin/service-records',
+    icon: FileText
+  }
+]
+
+const customerLinks = [
+  {
+    label: 'Dashboard',
+    path: '/customer',
+    icon: LayoutDashboard,
+    end: true
+  }
+]
+
+export default function DashboardLayout({ children, title }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
 
   const isAdmin = user?.role?.toLowerCase() === 'admin'
-
-  const dashboardPath = isAdmin ? '/admin' : '/customer'
-
-  function closeMenu() {
-    setMenuOpen(false)
-  }
+  const links = isAdmin ? adminLinks : customerLinks
 
   async function handleLogout() {
-    if (!window.confirm('Are you sure you want to log out?')) {
-      return
-    }
+    if (loggingOut) return
 
     setLoggingOut(true)
 
@@ -44,79 +76,50 @@ export default function DashboardLayout({ title, children }) {
     }
   }
 
+  const userName = user?.name || 'J-Prints User'
+  const userInitial = userName.charAt(0).toUpperCase()
+
   return (
     <div className="app-shell">
-
-      {/* Sidebar */}
-      <aside className={`sidebar ${menuOpen ? 'sidebar-open' : ''}`}>
-
-        {/* Application Brand */}
+      <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-brand">
           <Printer size={27} />
           <span>J-Prints</span>
 
           <button
-            type="button"
             className="mobile-close"
-            onClick={closeMenu}
-            aria-label="Close sidebar"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close menu"
           >
-            <X size={20} />
+            <X size={21} />
           </button>
         </div>
 
-        {/* Main Navigation */}
         <div className="sidebar-label">
           MAIN MENU
         </div>
 
         <nav className="sidebar-nav">
+          {links.map(link => {
+            const Icon = link.icon
 
-          {/* Dashboard */}
-          <NavLink
-            to={dashboardPath}
-            end
-            onClick={closeMenu}
-            className={({ isActive }) =>
-              `sidebar-item ${isActive ? 'active' : ''}`
-            }
-          >
-            <LayoutDashboard size={19} />
-            <span>Dashboard</span>
-          </NavLink>
-
-          {/* Administrator Navigation */}
-          {isAdmin && (
-            <>
-              {/* Customer Management */}
+            return (
               <NavLink
-                to="/admin/customers"
-                onClick={closeMenu}
+                key={link.path}
+                to={link.path}
+                end={link.end}
+                onClick={() => setSidebarOpen(false)}
                 className={({ isActive }) =>
                   `sidebar-item ${isActive ? 'active' : ''}`
                 }
               >
-                <Users size={19} />
-                <span>Customers</span>
+                <Icon size={19} />
+                <span>{link.label}</span>
               </NavLink>
-
-              {/* Services Management */}
-              <NavLink
-                to="/admin/services"
-                onClick={closeMenu}
-                className={({ isActive }) =>
-                  `sidebar-item ${isActive ? 'active' : ''}`
-                }
-              >
-                <Wrench size={19} />
-                <span>Services</span>
-              </NavLink>
-            </>
-          )}
-
+            )
+          })}
         </nav>
 
-        {/* Logout */}
         <div className="sidebar-bottom">
           <button
             type="button"
@@ -124,61 +127,41 @@ export default function DashboardLayout({ title, children }) {
             disabled={loggingOut}
           >
             <LogOut size={19} />
-            <span>
-              {loggingOut ? 'Logging Out...' : 'Log Out'}
-            </span>
+            <span>{loggingOut ? 'Logging Out...' : 'Log Out'}</span>
           </button>
         </div>
-
       </aside>
 
-      {/* Main Content */}
       <div className="main-area">
-
-        {/* Top Navigation Bar */}
         <header className="topbar">
-
           <div className="topbar-left">
             <button
-              type="button"
               className="menu-button"
-              onClick={() => setMenuOpen(true)}
-              aria-label="Open sidebar"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open menu"
             >
               <Menu size={23} />
             </button>
 
-            <strong>{title}</strong>
+            <strong>{title || 'J-Prints Dashboard'}</strong>
           </div>
 
-          {/* User Information */}
           <div className="user-chip">
-
-            <span className="user-avatar">
-              {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-            </span>
-
             <div>
-              <strong>
-                {user?.name || 'User'}
-              </strong>
-
-              <small>
-                {isAdmin ? 'Admin' : 'Customer'}
-              </small>
+              <strong>{userName}</strong>
+              <small>{isAdmin ? 'Administrator' : 'Customer'}</small>
             </div>
 
+            <div className="user-avatar" title={userName}>
+              {userInitial || <UserCircle size={20} />}
+            </div>
           </div>
-
         </header>
 
-        {/* Page Content */}
         <main className="page-content">
           {children}
         </main>
-
       </div>
-
     </div>
   )
 }

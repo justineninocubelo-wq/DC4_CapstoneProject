@@ -1,0 +1,81 @@
+/* Collapsible sidebar: isolated overrides for the existing J-Prints layout. */
+.jprints-layout .sidebar {
+  transition: width 220ms ease, padding 220ms ease;
+  overflow: hidden;
+}
+.jprints-layout .sidebar-brand {
+  gap: 10px;
+  padding-left: 10px;
+  padding-right: 6px;
+  white-space: nowrap;
+}
+.jprints-layout .jprints-brand-icon,
+.jprints-layout .sidebar-item > svg,
+.jprints-layout .sidebar-bottom button > svg {
+  flex-shrink: 0;
+}
+.jprints-layout .jprints-brand-name { min-width: 0; }
+.jprints-layout .jprints-collapse-button {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  color: #e2edff;
+  background: transparent;
+  cursor: pointer;
+}
+.jprints-layout .jprints-collapse-button:hover,
+.jprints-layout .jprints-collapse-button:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+}
+.jprints-layout .sidebar-item,
+.jprints-layout .sidebar-bottom button { white-space: nowrap; cursor: pointer; }
+.jprints-layout .sidebar-item:focus-visible,
+.jprints-layout .sidebar-bottom button:focus-visible {
+  outline: 2px solid #a7ceff;
+  outline-offset: 2px;
+}
+
+@media (min-width: 851px) {
+  .jprints-layout-collapsed .sidebar {
+    width: 78px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .jprints-layout-collapsed .sidebar-brand {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    padding: 8px 0 25px;
+  }
+  .jprints-layout-collapsed .sidebar-brand .jprints-collapse-button {
+    margin-left: 0;
+  }
+  .jprints-layout-collapsed .jprints-brand-name,
+  .jprints-layout-collapsed .sidebar-label,
+  .jprints-layout-collapsed .jprints-nav-label { display: none; }
+  .jprints-layout-collapsed .sidebar-item,
+  .jprints-layout-collapsed .sidebar-bottom button {
+    justify-content: center;
+    gap: 0;
+    padding-left: 0;
+    padding-right: 0;
+    min-height: 46px;
+  }
+}
+
+/* Mobile retains the existing full-width slide-out menu. */
+@media (max-width: 850px) {
+  .jprints-layout .sidebar { width: 255px; overflow-y: auto; }
+  .jprints-layout .jprints-collapse-button { display: none; }
+  .jprints-layout .sidebar-brand { padding-right: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jprints-layout .sidebar { transition: none; }
+}

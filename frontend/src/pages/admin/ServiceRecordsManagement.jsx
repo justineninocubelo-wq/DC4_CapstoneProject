@@ -268,13 +268,24 @@ export default function ServiceRecordsManagement() {
   }
 
   function requestLabel(request) {
-    const customer = request.customer?.user?.name
-    const printer = [
-      request.printer_brand,
-      request.printer_model
-    ].filter(Boolean).join(' ')
+    const customer = request.customer?.user?.name || 'Customer'
+    const service = request.service
+    const serviceName = service?.service_name || 'Service request'
+    const printer = [request.printer_brand, request.printer_model]
+      .filter(Boolean)
+      .join(' ')
+    const document = request.document_description?.trim()
 
-    return `#${request.id} - ${customer || 'Customer'} - ${printer}`
+    let details
+    if (service?.service_type === 'printing') {
+      details = document || serviceName
+    } else if (service?.service_type === 'repair') {
+      details = printer || serviceName
+    } else {
+      details = document || printer || serviceName
+    }
+
+    return `#${request.id} - ${customer} - ${details}`
   }
 
   return (

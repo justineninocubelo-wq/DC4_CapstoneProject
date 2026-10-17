@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
@@ -5,7 +6,11 @@ import {
   LockKeyhole,
   Mail,
   Eye,
-  EyeOff
+  EyeOff,
+  ArrowRight,
+  FileText,
+  Wrench,
+  Copy
 } from 'lucide-react'
 import { useAuth } from '../../contexts/useAuth'
 import './Login.css'
@@ -44,111 +49,161 @@ export default function Login() {
   }
 
   return (
-    <div className="auth-page">
-      <section className="auth-brand">
-        <div className="brand-logo">
-          <Printer size={30} />
-        </div>
+    <div className="jprints-login-page">
+      <div className="jprints-login-container">
 
-        <div className="brand-content">
-          <span className="eyebrow">WELCOME TO J-PRINTS</span>
+        {/* LEFT SIDE - BRANDING */}
+        <section className="jprints-login-brand">
+          <div className="jprints-login-shape shape-one"></div>
+          <div className="jprints-login-shape shape-two"></div>
+          <div className="jprints-login-shape shape-three"></div>
 
-          <h1>Printing made simple. Service made reliable.</h1>
-
-          <p>
-            Manage your printing needs and printer repair requests
-            through one convenient platform.
-          </p>
-
-          <div className="brand-features">
-            <span>Document Printing</span>
-            <span>Photocopying</span>
-            <span>Printer Repair</span>
-          </div>
-        </div>
-
-        <small>J-Prints Service Management System</small>
-      </section>
-
-      <section className="auth-form-side">
-        <div className="auth-card">
-          <div className="mobile-brand">
-            <Printer size={24} /> J-Prints
+          <div className="jprints-login-logo">
+            <div className="jprints-logo-icon">
+              <Printer size={26} />
+            </div>
+            <span>J-Prints</span>
           </div>
 
-          <span className="eyebrow blue">ACCOUNT ACCESS</span>
-
-          <h2>Welcome back!</h2>
-
-          <p className="muted">
-            Sign in to continue to your dashboard.
-          </p>
-
-          <form onSubmit={handleSubmit}>
-            {error && (
-              <div className="alert-error">{error}</div>
-            )}
-
-            <label htmlFor="email">Email address</label>
-
-            <div className="input-wrapper">
-              <Mail size={18} />
-
-              <input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                autoComplete="email"
-                required
-              />
+          <div className="jprints-login-welcome">
+            <div className="jprints-welcome-tag">
+              YOUR PRINTING & REPAIR PARTNER
             </div>
 
-            <label htmlFor="password">Password</label>
+            <h1>
+              WELCOME TO
+              <span> J-PRINTS.</span>
+            </h1>
 
-            <div className="input-wrapper jprints-password-wrapper">
-              <LockKeyhole size={18} />
+            <h2>
+              Printing made simple.
+              <br />
+              Service made reliable.
+            </h2>
 
-              <input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                autoComplete="current-password"
-                required
-              />
+            <p>
+              Manage your printing needs and printer repair
+              requests through one convenient platform.
+            </p>
+
+            <div className="jprints-login-features">
+              <div className="jprints-feature">
+                <FileText size={18} />
+                <span>Document Printing</span>
+              </div>
+
+              <div className="jprints-feature">
+                <Copy size={18} />
+                <span>Photocopying</span>
+              </div>
+
+              <div className="jprints-feature">
+                <Wrench size={18} />
+                <span>Printer Repair</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* RIGHT SIDE - LOGIN FORM */}
+        <section className="jprints-login-form-section">
+          <div className="jprints-login-card">
+
+            <div className="jprints-login-card-header">
+              <div className="jprints-login-mobile-logo">
+                <Printer size={22} />
+                <span>J-Prints</span>
+              </div>
+
+              <span className="jprints-login-eyebrow">
+                ACCOUNT ACCESS
+              </span>
+
+              <h2>Welcome back!</h2>
+
+              <p>
+                Sign in to continue to your dashboard.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="jprints-login-form">
+
+              {error && (
+                <div className="jprints-login-error" role="alert">
+                  {error}
+                </div>
+              )}
+
+              <div className="jprints-login-field">
+                <label htmlFor="email">Email address</label>
+
+                <div className="jprints-login-input">
+                  <Mail size={19} />
+
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    autoComplete="email"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="jprints-login-field">
+                <label htmlFor="password">Password</label>
+
+                <div className="jprints-login-input">
+                  <LockKeyhole size={19} />
+
+                  <input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    autoComplete="current-password"
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    className="jprints-login-eye"
+                    onClick={() => setShowPassword(previous => !previous)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-pressed={showPassword}
+                    title={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword
+                      ? <EyeOff size={19} />
+                      : <Eye size={19} />}
+                  </button>
+                </div>
+              </div>
 
               <button
-                type="button"
-                className="jprints-password-toggle"
-                onClick={() => setShowPassword(previous => !previous)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                aria-pressed={showPassword}
-                title={showPassword ? 'Hide password' : 'Show password'}
+                type="submit"
+                className="jprints-login-submit"
+                disabled={submitting}
               >
-                {showPassword
-                  ? <EyeOff size={19} />
-                  : <Eye size={19} />}
+                <span>{submitting ? 'Signing in...' : 'Sign In'}</span>
+                {!submitting && <ArrowRight size={19} />}
               </button>
+            </form>
+
+            <div className="jprints-login-divider">
+              <span>NEW TO J-PRINTS?</span>
             </div>
 
-            <button
-              type="submit"
-              className="primary-button"
-              disabled={submitting}
-            >
-              {submitting ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
-
-          <p className="auth-footer">
-            Don't have an account?{' '}
-            <Link to="/register">Create an account</Link>
-          </p>
-        </div>
-      </section>
+            <p className="jprints-login-register">
+              Don't have an account?{' '}
+              <Link to="/register">Create an account</Link>
+            </p>
+          </div>
+        </section>
+      </div>
     </div>
   )
 }

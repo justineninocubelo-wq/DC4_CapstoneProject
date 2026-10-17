@@ -1,0 +1,53 @@
+/* ==========================================
+   J-PRINTS LOGIN PASSWORD VISIBILITY
+========================================== */
+
+.jprints-password-wrapper {
+  position: relative;
+}
+
+.jprints-password-wrapper input {
+  padding-right: 48px;
+  min-width: 0;
+}
+
+.jprints-password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  padding: 0;
+  margin: 0;
+
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+
+  color: #64748b;
+  cursor: pointer;
+
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.jprints-password-toggle:hover {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.jprints-password-toggle:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.jprints-password-toggle svg {
+  flex-shrink: 0;
+  pointer-events: none;
+}

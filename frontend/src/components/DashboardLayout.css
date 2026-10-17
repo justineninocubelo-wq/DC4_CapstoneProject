@@ -1,20 +1,45 @@
-/* Collapsible sidebar: isolated overrides for the existing J-Prints layout. */
-.jprints-layout .sidebar {
-  transition: width 220ms ease, padding 220ms ease;
-  overflow: hidden;
+/* ==========================================
+   J-PRINTS DASHBOARD SIDEBAR
+========================================== */
+
+.jprints-layout {
+  min-height: 100vh;
 }
+
+/* Keep the sidebar visible on desktop */
+@media (min-width: 851px) {
+  .jprints-layout .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 220ms ease, padding 220ms ease;
+  }
+}
+
+/* Brand */
 .jprints-layout .sidebar-brand {
   gap: 10px;
   padding-left: 10px;
   padding-right: 6px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
+
 .jprints-layout .jprints-brand-icon,
 .jprints-layout .sidebar-item > svg,
 .jprints-layout .sidebar-bottom button > svg {
   flex-shrink: 0;
 }
-.jprints-layout .jprints-brand-name { min-width: 0; }
+
+.jprints-layout .jprints-brand-name {
+  min-width: 0;
+}
+
 .jprints-layout .jprints-collapse-button {
   margin-left: auto;
   display: inline-flex;
@@ -29,17 +54,52 @@
   background: transparent;
   cursor: pointer;
 }
+
 .jprints-layout .jprints-collapse-button:hover,
 .jprints-layout .jprints-collapse-button:focus-visible {
   background: rgba(255, 255, 255, 0.14);
 }
+
+/* Navigation */
+.jprints-layout .sidebar-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .jprints-layout .sidebar-item,
-.jprints-layout .sidebar-bottom button { white-space: nowrap; cursor: pointer; }
+.jprints-layout .sidebar-bottom button {
+  white-space: nowrap;
+  cursor: pointer;
+}
+
 .jprints-layout .sidebar-item:focus-visible,
 .jprints-layout .sidebar-bottom button:focus-visible {
   outline: 2px solid #a7ceff;
   outline-offset: 2px;
 }
+
+/* Always-visible logout section */
+.jprints-layout .sidebar-bottom {
+  margin-top: auto;
+  flex-shrink: 0;
+  position: relative;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background: inherit;
+}
+
+.jprints-layout .sidebar-bottom button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* ==========================================
+   COLLAPSED SIDEBAR
+========================================== */
 
 @media (min-width: 851px) {
   .jprints-layout-collapsed .sidebar {
@@ -47,18 +107,24 @@
     padding-left: 12px;
     padding-right: 12px;
   }
+
   .jprints-layout-collapsed .sidebar-brand {
     display: grid;
     justify-items: center;
     gap: 10px;
     padding: 8px 0 25px;
   }
+
   .jprints-layout-collapsed .sidebar-brand .jprints-collapse-button {
     margin-left: 0;
   }
+
   .jprints-layout-collapsed .jprints-brand-name,
   .jprints-layout-collapsed .sidebar-label,
-  .jprints-layout-collapsed .jprints-nav-label { display: none; }
+  .jprints-layout-collapsed .jprints-nav-label {
+    display: none;
+  }
+
   .jprints-layout-collapsed .sidebar-item,
   .jprints-layout-collapsed .sidebar-bottom button {
     justify-content: center;
@@ -69,13 +135,165 @@
   }
 }
 
-/* Mobile retains the existing full-width slide-out menu. */
+/* ==========================================
+   MOBILE SIDEBAR
+========================================== */
+
 @media (max-width: 850px) {
-  .jprints-layout .sidebar { width: 255px; overflow-y: auto; }
-  .jprints-layout .jprints-collapse-button { display: none; }
-  .jprints-layout .sidebar-brand { padding-right: 12px; }
+  .jprints-layout .sidebar {
+    width: 255px;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .jprints-layout .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .jprints-layout .sidebar-bottom {
+    margin-top: auto;
+    flex-shrink: 0;
+  }
+
+  .jprints-layout .jprints-collapse-button {
+    display: none;
+  }
+
+  .jprints-layout .sidebar-brand {
+    padding-right: 12px;
+  }
+}
+
+/* ==========================================
+   LOGOUT CONFIRMATION MODAL
+========================================== */
+
+.jprints-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.jprints-logout-modal {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px 28px;
+  background: #ffffff;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+  animation: jprints-modal-appear 180ms ease-out;
+}
+
+.jprints-modal-icon {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.jprints-logout-modal h2 {
+  margin: 0 0 10px;
+  font-size: 23px;
+  font-weight: 700;
+  color: #172554;
+}
+
+.jprints-logout-modal p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #64748b;
+}
+
+.jprints-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.jprints-modal-actions button {
+  flex: 1;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.jprints-modal-actions button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+/* Cancel button - LEFT, GRAY */
+.jprints-cancel-button {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.jprints-cancel-button:hover:not(:disabled) {
+  background: #d1d5db;
+}
+
+/* Log Out button - RIGHT, RED */
+.jprints-confirm-logout-button {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.jprints-confirm-logout-button:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.jprints-modal-actions button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@keyframes jprints-modal-appear {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .jprints-logout-modal {
+    padding: 26px 20px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .jprints-layout .sidebar { transition: none; }
+  .jprints-layout .sidebar {
+    transition: none;
+  }
+
+  .jprints-logout-modal {
+    animation: none;
+  }
 }
